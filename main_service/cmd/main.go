@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"main_service/internal/pubsub"
 	"main_service/pkg/models"
 	"net/http"
 	"time"
@@ -59,6 +60,7 @@ func initRedis() {
 		logger.Fatal("Failed to connect to Redis", zap.Error(err))
 	}
 	logger.Info("Redis connected successfully")
+	pubsub.InitRedisClient("localhost:6379")
 }
 
 func testRedisPubSub() {
