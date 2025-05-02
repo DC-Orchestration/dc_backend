@@ -40,3 +40,12 @@ func (p *RedisPublisher) Loginlinkchin(log models.AuditLog) error {
 	channel := fmt.Sprintf("notifications:message:%s", strconv.FormatUint(uint64(log.ID), 10))
 	return RedisClient.Publish(context.Background(), channel, data).Err()
 }
+func (p *RedisPublisher) PublishIservice(changes Message) error {
+	data, err := json.Marshal(changes)
+	if err != nil {
+		return fmt.Errorf("failed to marshal redis message: %w", err)
+	}
+
+	channel := "AI"
+	return RedisClient.Publish(context.Background(), channel, data).Err()
+}

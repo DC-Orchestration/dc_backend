@@ -25,3 +25,10 @@ func SaveDocumentFile(originalFilename string, data []byte) (string, error) {
 
 	return fullPath, nil
 }
+func ReadDocumentFile(filePath string) ([]byte, error) {
+    data, err := os.ReadFile(filePath)
+    if err != nil {
+        return nil, fmt.Errorf("failed to read file: %w", err)
+    }
+    return data, nil
+}
