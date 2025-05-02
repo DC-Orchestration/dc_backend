@@ -2,15 +2,19 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"main_service/internal/audit"
+	"main_service/internal/doc"
+	"main_service/internal/group"
 	"main_service/internal/pubsub"
+	"main_service/internal/user"
+	"main_service/pkg/config"
 	"main_service/pkg/models"
 	"net/http"
 	"time"
+	"github.com/go-chi/chi/v5"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -63,6 +67,7 @@ func initRedis() {
 	pubsub.InitRedisClient("localhost:6379")
 }
 
+
 func testRedisPubSub() {
 	channel := "test:channel"
 
@@ -86,12 +91,15 @@ func testRedisPubSub() {
 	}
 }
 
-func setupRouter() *mux.Router {
-	r := mux.NewRouter()
-	r.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "OK")
-	}).Methods("GET")
+func SetupRoutes(db *gorm.DB) http.Handler {
+	r := chi.NewRouter()
+
+	user.RegisterUserRoutes(r, db)
+	group.RegisterGroupRoutes(r, db, config.SendEmail)
+	doc.RegisterDocRoutes(r, db)
+
+	audit.RegisterAuditRoutes(r, db)
+
 	return r
 }
 
@@ -101,9 +109,10 @@ func main() {
 	initRedis()
 	testRedisPubSub()
 
-	r := setupRouter()
+	r := SetupRoutes(gormDB)
 	logger.Info("HTTP server running on :8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		logger.Fatal("HTTP server failed", zap.Error(err))
 	}
 }
+
