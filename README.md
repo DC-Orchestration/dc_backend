@@ -34,7 +34,7 @@ This platform consists of three major services:
 |---------------------|------------------------|-------------------------------------------------|
 | Main Backend        | Go + SQLite            | Handles auth, docs, permissions, sync, signing |
 | AI Compliance       | FastAPI (Python)       | NLP clause analysis and rule validation        |
-| Blockchain Gateway  | Go or FastAPI          | Anchors logs to Hyperledger/Ethereum L2        |
+| Blockchain Gateway  | Express typescript     | Anchors logs to Hyperledger/Ethereum L2        |
 | Frontend            | React + TipTap/Slate   | Rich-text editor with encryption & sync        |
 
 ---
